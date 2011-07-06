@@ -3,8 +3,8 @@
 # If they supplied a message for the commit do nothing
 if [ "$2" != "message" ]
 then
-  token='enter pivotal tracker token'
-  project=enter project number
+  token=$(php -r "require '$(dirname "$0")/Config.php'; print \"{\$CONFIG['PivotalAPIToken']}\";")
+  project=322521
 
   # Build new message in a tempfile
   tempfile=`mktemp pivotal-git-hook.XXXXXXXXXXXXX`
@@ -16,7 +16,7 @@ then
   # Get list of open stories from the current iteration
   # and turn them into comments
   curl -s -H "X-TrackerToken: ${token}" -X GET \
-   http://www.pivotaltracker.com/services/v3/projects/${project}/iterations/current \
+   https://www.pivotaltracker.com/services/v3/projects/${project}/iterations/current \
    | xsltproc `dirname ${0}`/xsl - >> "$tempfile"
 
   # Copy the comment lines from previous commit message
